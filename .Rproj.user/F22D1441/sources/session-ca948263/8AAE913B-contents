@@ -1,0 +1,36 @@
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+source("main.R")
+
+df_2018 <- select(data_2018, Date, Time = time, PM10 = "PM<sub>10</sub> particulate matter (Hourly measured)")
+df_2019 <- select(data_2019, Date, Time = time, PM10 = "PM<sub>10</sub> particulate matter (Hourly measured)")
+df_2020 <- select(data_2020, Date, Time = time, PM10 = "PM<sub>10</sub> particulate matter (Hourly measured)")
+df_2021 <- select(data_2021, Date, Time = time, PM10 = "PM<sub>10</sub> particulate matter (Hourly measured)")
+df_2022 <- select(data_2022, Date, Time = time, PM10 = "PM<sub>10</sub> particulate matter (Hourly measured)")
+df_2023 <- select(data_2023, Date, Time = time, PM10 = "PM<sub>10</sub> particulate matter (Hourly measured)")
+
+df_2018$Date <- dmy(df_2018$Date)
+df_2019$Date <- dmy(df_2019$Date)
+df_2020$Date <- dmy(df_2020$Date)
+df_2021$Date <- dmy(df_2021$Date)
+df_2022$Date <- dmy(df_2022$Date)
+df_2023$Date <- dmy(df_2023$Date)
+
+dates_2018 <- df_2018 %>% filter(Date %in% my_dates)
+dates_2019 <- df_2019 %>% filter(Date %in% my_dates)
+dates_2020 <- df_2020 %>% filter(Date %in% my_dates)
+dates_2021 <- df_2021 %>% filter(Date %in% my_dates)
+dates_2022 <- df_2022 %>% filter(Date %in% my_dates)
+dates_2023 <- df_2023 %>% filter(Date %in% my_dates)
+
+poar_pm10 <- bind_rows(dates_2018, dates_2019, dates_2020, dates_2021, dates_2022, dates_2023)
+#poar_pm10_filled <- mutate(poar_pm10, PM10_filled = if_else(is.na(PM10), coalesce(lead(PM10), lag(PM10)) + coalesce(lead(PM10), lag(PM10)) / 2, PM10))
+
+poar_pm10$Time <- as.factor(poar_pm10$Time)
+
+pm10_plot <- ggplot(poar_pm10, aes(Date, PM10)) + geom_point(aes(colour = Time, shape = Time))
+
+ggplotly(pm10_plot)

@@ -1,0 +1,41 @@
+library(shiny)
+library(ggplot2)
+library(plotly)
+library(lubridate)
+library(dplyr)
+source("pm10.R")
+
+
+# Define UI for application
+ui <- fluidPage(
+  titlePanel("PM10 Plot"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("time_slider", "Time Range:",
+                  min = min(poar_pm10$Time),
+                  max = max(poar_pm10$Time),
+                  value = c(min(poar_pm10$Time), max(poar_pm10$Time)))
+    ),
+    mainPanel(
+      plotlyOutput("plot")
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output, session) {
+  output$plot <- renderPlotly({
+    # Filter data based on the slider input
+    filtered_data <- poar_pm10 %>% 
+      filter(Time >= input$time_slider[1] & Time <= input$time_slider[2])
+    
+    # Create plot
+    pm10_plot <- ggplot(filtered_data, aes(Time, PM10)) + geom_point(aes(colour = Date))
+    
+    # Convert ggplot to plotly
+    ggplotly(pm10_plot)
+  })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)

@@ -1,0 +1,31 @@
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(lubridate)
+library(dygraphs)
+
+myData_2020 <- read_csv("POAR_2020.csv", skip = 4)
+
+myData <- select(myData_2020, Date, Time = time, PM10 = "PM<sub>10</sub> particulate matter (Hourly measured)", Nitric_oxide = "Nitric oxide", Nitrogen_oxides_as_nitrogen_dioxide = "Nitrogen oxides as nitrogen dioxide")
+
+myData$Date <- as.Date(myData$Date)
+
+myData$months <- months(myData$Date)
+myData$months <- factor(myData$months, levels = month.name)
+
+myAgg <- aggregate(cbind(PM10, Nitric_oxide, Nitrogen_oxides_as_nitrogen_dioxide) ~ months, myData, mean, na.rm = TRUE)
+
+# myData_plot <-  ggplot(myAgg, aes(x = months)) +
+#   geom_line(aes(y = PM10, color = "PM10")) +
+#   geom_line(aes(y = Nitric_oxide, color = "Nitric_oxide")) +
+#   geom_line(aes(y = Nitrogen_oxides_as_nitrogen_dioxide, color = "Nitrogen_oxides_as_nitrogen_dioxide")) +
+#   labs(x = "Month", y = "Value", color = "Variable") +
+#   ggtitle("2020 Monthly Trends") + theme_classic()
+
+# ggplotly(myData_plot)
+
+my_data <- ts(myAgg[, -1], start = c(2020, 1), frequency = 12)
+mydy <-  dygraph(my_data) %>% dyRangeSelector()
+mydy

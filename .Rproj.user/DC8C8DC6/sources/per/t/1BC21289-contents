@@ -1,0 +1,75 @@
+---
+title: "BTC Visualisations for Portsmouth’s Clean Air Zone (CAZ)"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(dygraphs)
+source("main.R")
+source("pm10.R")
+source("nitric_oxide.R")
+source("no_no2.R")
+source("monthly_averages2020.R")
+source("my_comparison.R")
+```
+
+Column {data-width=500, data-height=1500}
+-----------------------------------------------------------------------
+
+### PM10 Plot
+
+```{r}
+
+ggplotly(pm10_plot)
+
+```
+
+Column {data-width=500, data-height=1500}
+-----------------------------------------------------------------------
+
+### Nitric Oxide Plot
+
+```{r}
+
+ggplotly(nitric_oxide_plot)
+
+```
+
+Column {data-width=500, data-height=1500}
+-----------------------------------------------------------------------
+
+### Nitric Oxide as NitrogenDioxide Plot
+
+```{r}
+
+ggplotly(Nitric_Oxide_as_NitrogenDioxide_plot)
+
+```
+
+Column {data-width=500, data-height=1500}
+-----------------------------------------------------------------------
+
+### 2020 Monthly Averages Dygrapgh 
+
+```{r}
+
+mydy
+
+```
+
+Column {data-width=500, data-height=1500}
+-----------------------------------------------------------------------
+
+### PM10 Comparison for Year Before and After the Clean Air Zone 
+
+```{r}
+
+ggplotly(my_comp_bar)
+
+```

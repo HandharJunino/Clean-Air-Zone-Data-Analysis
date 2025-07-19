@@ -1,0 +1,35 @@
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+source("main.R")
+
+df_2018_no <- select(data_2018, Date, Time = time, "Nitrogen oxides as nitrogen dioxide")
+df_2019_no <- select(data_2018, Date, Time = time, "Nitrogen oxides as nitrogen dioxide")
+df_2020_no <- select(data_2018, Date, Time = time, "Nitrogen oxides as nitrogen dioxide")
+df_2021_no <- select(data_2018, Date, Time = time, "Nitrogen oxides as nitrogen dioxide")
+df_2022_no <- select(data_2018, Date, Time = time, "Nitrogen oxides as nitrogen dioxide")
+df_2023_no <- select(data_2018, Date, Time = time, "Nitrogen oxides as nitrogen dioxide")
+
+df_2018_no$Date <- dmy(df_2018_no$Date)
+df_2019_no$Date <- dmy(df_2019_no$Date)
+df_2020_no$Date <- dmy(df_2020_no$Date)
+df_2021_no$Date <- dmy(df_2021_no$Date)
+df_2022_no$Date <- dmy(df_2022_no$Date)
+df_2023_no$Date <- dmy(df_2023_no$Date)
+
+dates_2018_no <- df_2018_no %>% filter(Date %in% my_dates)
+dates_2019_no <- df_2019_no %>% filter(Date %in% my_dates)
+dates_2020_no <- df_2020_no %>% filter(Date %in% my_dates)
+dates_2021_no <- df_2021_no %>% filter(Date %in% my_dates)
+dates_2022_no <- df_2022_no %>% filter(Date %in% my_dates)
+dates_2023_no <- df_2023_no %>% filter(Date %in% my_dates)
+
+poar_nitricDioxide <- bind_rows(dates_2018_no, dates_2019_no, dates_2020_no, dates_2021_no, dates_2022_no, dates_2023_no)
+
+poar_nitricDioxide$Time <- as.factor(poar_nitricDioxide$Time)
+
+Nitric_Oxide_as_NitrogenDioxide_plot <- ggplot(poar_nitricDioxide, aes(Date, "Nitrogen oxides as nitrogen dioxide")) + geom_point(aes(colour = Time, shape = Time))
+
+ggplotly(Nitric_Oxide_as_NitrogenDioxide_plot)
